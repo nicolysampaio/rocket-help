@@ -1,5 +1,5 @@
-import { Heading, HStack, IconButton, StyledProps, useTheme } from 'native-base';
 import { CaretLeft } from 'phosphor-react-native';
+import { Heading, HStack, IconButton, StyledProps, useTheme } from 'native-base';
 
 type Props = StyledProps & {
   title: string;
