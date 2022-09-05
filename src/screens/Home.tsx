@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Heading,
   HStack,
@@ -8,17 +9,18 @@ import {
   FlatList,
   Center,
 } from "native-base";
+import { Alert } from "react-native";
 import { ChatTeardropText, SignOut } from "phosphor-react-native";
-import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import auth from "@react-native-firebase/auth";
 
 import Logo from "../assets/logo_secondary.svg";
+
 import { Filter } from "../components/Filter";
 import { Order, OrderProps } from "../components/Order";
-import { Button } from '../components/Button';
+import { Button } from "../components/Button";
 
 export function Home() {
-
   const [statusSelected, setStatusSelected] = useState<"open" | "closed">(
     "open"
   );
@@ -27,12 +29,21 @@ export function Home() {
       id: "456",
       patrimony: "12345678",
       when: "18/07/2022 às 14:00",
-      status: "open"
-    }
+      status: "open",
+    },
   ]);
 
   const navigation = useNavigation();
   const { colors } = useTheme();
+
+  function handleLogout() {
+    auth()
+      .signOut()
+      .catch((error) => {
+        console.log(error);
+        return Alert.alert("Sair", "Não foi possível sair.");
+      });
+  }
 
   function handleNewOrder() {
     navigation.navigate("new");
@@ -54,7 +65,10 @@ export function Home() {
         px={6}
       >
         <Logo />
-        <IconButton icon={<SignOut size={26} color={colors.gray[300]} />} />
+        <IconButton
+          icon={<SignOut size={26} color={colors.gray[300]} />}
+          onPress={handleLogout}
+        />
       </HStack>
 
       <VStack flex={1} px={6}>
@@ -87,7 +101,9 @@ export function Home() {
         <FlatList
           data={orders}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <Order data={item} onPress={() => handleOpenDetails(item.id)} />}
+          renderItem={({ item }) => (
+            <Order data={item} onPress={() => handleOpenDetails(item.id)} />
+          )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 50 }}
           ListEmptyComponent={() => (
